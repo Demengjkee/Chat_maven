@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>DemPracChat</title>
+    <script src="js/Events.js"></script>
+    <link rel = "stylesheet" href="css/styles.css">
+    <link href="css/perfect-scrollbar.css" rel="stylesheet">
+    <script src="js/jquery-1.11.2.js"></script>
+    <script src="js/perfect-scrollbar.js"></script>
+    <script src="js/perfect-scrollbar.jquery.js"></script>
+</head>
+<body text="white" onload="start();"> <!--onunload="close();" -->
+
+<div class = "chat">
+    <div class = "upperLineMain">
+        <p class="text"> DemPracChat v.0.0.1 pre-alpha </p>
+        <p class="rightText">Server: OK</p>
+    </div>
+    <div class = "mainWindow" id="chat">
+
+
+
+    </div>
+    <div class = newMsg>
+        <input type="text" name="messageInput" class="message" placeholder="Type a message">
+        <input type="submit" class="sendButton" value="send">
+    </div>
+    <div class="usersOnline">
+        <div class = "upperLineUsers">
+            Users online:
+        </div>
+
+        <div class="usernameLine">
+            Your username:<br/>
+            <input type="text" class="username" placeholder="Enter your nickname">
+        </div>
+        <input type="submit" class="confirmNameButton" value="confirm">
+
+    </div>
+</div>
+
+
+
+</body>
+</html>

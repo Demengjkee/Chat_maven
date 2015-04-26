@@ -1,0 +1,139 @@
+body{
+    background: rgba(0,0,0,0.95);
+}
+.chat{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    white-space: nowrap;
+}
+.mainWindow{
+    position: relative;
+    width: 70%;
+    top: 0;
+    height: 91%;
+    float: left;
+    bottom: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.usersOnline{
+    border-left: solid 4px gray;
+    top: -23px;
+    position: relative;
+    width: 29%;
+    height: 100%;
+    float: left;
+    bottom: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.message{
+    position: relative;
+    left: 1%;
+    bottom: 1%;
+    width: 59%;
+}
+.newMsg{
+    position: absolute;
+    left: 0;
+    bottom: 1%;
+    width: 100%;
+}
+.sendButton{
+    position: absolute;
+    right: 31%;
+    bottom: 1%;
+    width: 8%;
+}
+.confirmNameButton{
+    position: absolute;
+    right: 1%;
+    bottom: 1%;
+    width: 20%;
+}
+.upperLineMain{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 70%;
+    display: inline;
+    font-family: cursive;
+    height: 1.2em;
+    border-bottom: solid 4px grey;
+    float: left;
+}
+.upperLineUsers{
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 150%;
+    font-family: cursive;
+    height: 1.2em;
+    border-bottom: solid 4px grey;
+}
+.usernameLine{
+    position: absolute;
+    left: 2%;
+    bottom: 1%;
+    width: 100%;
+}
+.username{
+    width: 75%;
+}
+.message1{
+    position: relative;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    padding-left: 5px;
+    padding-right: 10px;
+    max-width: 100%;
+    margin-top: 6px;
+    margin-right: 10px;
+    margin-left: 10px;
+    border-bottom: solid 2px gray;
+}
+.text{
+    display: inline;
+    margin: 0;
+    font-size: 16px;
+    font-family: cursive;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.nickname{
+    color: darkcyan;
+}
+.delete{
+    position: absolute;
+    right: 0;
+    top: -8px;
+    visibility: hidden;
+}
+.edit{
+    position: absolute;
+    right: 0;
+    top: 8px;
+    visibility: hidden;
+}
+.onlineUser{
+    position: relative;
+    max-width: 100%;
+    margin-top: 2px;
+    margin-right: 10px;
+    margin-left: 10px;
+    border-bottom: groove 1px lightgray;
+}
+.rightText{
+    display: inline;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    margin: 0;
+    font-size: 16px;
+    font-family: cursive;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
