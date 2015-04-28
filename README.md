@@ -4,4 +4,4 @@ Frontend TODO : autoscroll, smiles, fix useronline list
 
 Backend TODO :  doDelete, duPut
 
-server is usung longpolling
+server is using longpolling
