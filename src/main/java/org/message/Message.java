@@ -1,13 +1,21 @@
 package org.message;
 
-/**
- * Created by demeng on 29.03.15.
- */
+import java.util.Date;
+
 public class Message {
     private String message;
     private String username;
     private String type;
     private int id;
+    private Date date;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     public int getId() {
         return id;
