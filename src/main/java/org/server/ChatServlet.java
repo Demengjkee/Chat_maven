@@ -81,7 +81,6 @@ public class ChatServlet extends HttpServlet {
                 usernames.add((String)session.getAttribute("username"));
             }
             JsonProvider jsonProvider = JsonProvider.provider();
-            System.out.println(usernames.toString());
             JsonObject respMessage = jsonProvider.createObjectBuilder()
                     .add("usernames", usernames.toString())
                     .add("type", message.getType())

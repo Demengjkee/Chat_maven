@@ -2,8 +2,8 @@ function start() {
     var username;
     var sendButton = document.getElementsByClassName("sendButton");
     $(function () {
-        $('#chat').perfectScrollbar();
         Ps.initialize(document.getElementById('chat'));
+        Ps.suppressScrollY = true;
     });
     function addMessageDiv(Text, uname) {
         var newDiv = document.createElement('div');
@@ -15,7 +15,16 @@ function start() {
         + "<p class='text'>" + Text + "</p>";
         return newDiv;
     }
-    sendButton[0].addEventListener("click", function () {
+
+    addEventListener("keypress", function(e) {
+       if(e.keyCode == 13 && $('.message').is(':focus')) {
+           console.log("123");
+           send();
+       }
+    });
+
+    sendButton[0].addEventListener("click", send);
+    function send() {
         if(username !== undefined) {
             var message = document.getElementsByClassName("message")[0].value;
             $.ajax({
@@ -32,7 +41,7 @@ function start() {
             alert("login pls");
         }
 
-    });
+    };
     function addMessage(resp) {
         if (username != undefined) {
             var tmp = $.parseJSON(resp);
@@ -65,7 +74,10 @@ function start() {
                     this.parentNode.childNodes[3].innerHTML = prompt("EditMessage", oldmsg);
                     $(this.parentNode.childNodes[3]).hide().fadeIn(300);
                 });
+
             }
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            Ps.update(document.getElementById('chat'));
         }
         else {
             alert("please, enter your nickname");

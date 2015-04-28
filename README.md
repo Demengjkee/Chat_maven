@@ -1,6 +1,6 @@
 # Chat_maven
 
-Frontend TODO : autoscroll, smiles
+Frontend TODO :   smiles
 
 Backend TODO :  doDelete, doPut, history
 
