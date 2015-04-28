@@ -1,7 +1,8 @@
-body{
-    background: rgba(0,0,0,0.95);
+body {
+    background: rgba(0, 0, 0, 0.95);
 }
-.chat{
+
+.chat {
     position: fixed;
     top: 0;
     left: 0;
@@ -9,7 +10,8 @@ body{
     width: 100%;
     white-space: nowrap;
 }
-.mainWindow{
+
+.mainWindow {
     position: relative;
     width: 70%;
     top: 0;
@@ -19,7 +21,8 @@ body{
     overflow-x: hidden;
     overflow-y: auto;
 }
-.usersOnline{
+
+.usersOnline {
     border-left: solid 4px gray;
     top: -23px;
     position: relative;
@@ -30,31 +33,36 @@ body{
     overflow-x: hidden;
     overflow-y: auto;
 }
-.message{
+
+.message {
     position: relative;
     left: 1%;
     bottom: 1%;
     width: 59%;
 }
-.newMsg{
+
+.newMsg {
     position: absolute;
     left: 0;
     bottom: 1%;
     width: 100%;
 }
-.sendButton{
+
+.sendButton {
     position: absolute;
     right: 31%;
     bottom: 1%;
     width: 8%;
 }
-.confirmNameButton{
+
+.confirmNameButton {
     position: absolute;
     right: 1%;
     bottom: 1%;
     width: 20%;
 }
-.upperLineMain{
+
+.upperLineMain {
     position: relative;
     top: 0;
     left: 0;
@@ -65,7 +73,8 @@ body{
     border-bottom: solid 4px grey;
     float: left;
 }
-.upperLineUsers{
+
+.upperLineUsers {
     position: relative;
     top: 0;
     left: 0;
@@ -74,16 +83,19 @@ body{
     height: 1.2em;
     border-bottom: solid 4px grey;
 }
-.usernameLine{
+
+.usernameLine {
     position: absolute;
     left: 2%;
     bottom: 1%;
     width: 100%;
 }
-.username{
+
+.username {
     width: 75%;
 }
-.message1{
+
+.message1 {
     position: relative;
     padding-top: 0.1em;
     padding-bottom: 0.1em;
@@ -95,7 +107,8 @@ body{
     margin-left: 10px;
     border-bottom: solid 2px gray;
 }
-.text{
+
+.text {
     display: inline;
     margin: 0;
     font-size: 16px;
@@ -103,22 +116,26 @@ body{
     white-space: pre-wrap;
     word-wrap: break-word;
 }
-.nickname{
+
+.nickname {
     color: darkcyan;
 }
-.delete{
+
+.delete {
     position: absolute;
     right: 0;
     top: -8px;
     visibility: hidden;
 }
-.edit{
+
+.edit {
     position: absolute;
     right: 0;
     top: 8px;
     visibility: hidden;
 }
-.onlineUser{
+
+.onlineUser {
     position: relative;
     max-width: 100%;
     margin-top: 2px;
@@ -126,7 +143,8 @@ body{
     margin-left: 10px;
     border-bottom: groove 1px lightgray;
 }
-.rightText{
+
+.rightText {
     display: inline;
     position: absolute;
     top: 0;

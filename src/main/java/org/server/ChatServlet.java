@@ -1,85 +1,97 @@
 package org.server;
 
 import org.message.Message;
+
+import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.LinkedList;
+import java.util.List;
 import javax.json.*;
 import javax.json.spi.*;
 import javax.servlet.http.HttpSession;
 
-/**
- * Created by demeng on 29.03.15.
- */
-@WebServlet("/ChatServlet")
+@WebServlet(urlPatterns = {"/ChatServlet"}, asyncSupported = true)
 public class ChatServlet extends HttpServlet {
     private Integer id = 0;
     private final ArrayList<Message> messages = new ArrayList<>();
-    private final ArrayList<HttpSession> sessions = new ArrayList<>();
-
+    private List<AsyncContext> contexts = new LinkedList<>();
+    private final List<HttpSession> sessions = new ArrayList<>();
 
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        if (!sessions.contains(request.getSession())) {
+        if(!sessions.contains(request.getSession())) {
             sessions.add(request.getSession());
         }
-
-        System.out.println("it works GET");
-        String reqLine = request.getQueryString();
-        JsonProvider jsonProvider = JsonProvider.provider();
-        PrintWriter writer = response.getWriter();
-        StringTokenizer st = new StringTokenizer(reqLine, "=&");
-        st.nextToken();
-        String type = st.nextToken();
-        if (type.equals("connect")) {
-            ArrayList<JsonObject> respArray = new ArrayList<>();
-            JsonArray jsonValues = jsonProvider.createArrayBuilder().build();
-            if (messages.size() > 15) {
-                for (int i = messages.size() - 15; i > messages.size(); i++) {
-                    JsonObject respMessage = jsonProvider.createObjectBuilder()
-                            .add("id", messages.get(i).getId())
-                            .add("username", messages.get(i).getUsername())
-                            .add("message", messages.get(i).getMessage())
-                            .build();
-                    jsonValues.add(respMessage);
-                    //respArray.add(respMessage);
-                }
-
-                writer.print(jsonValues);
-            } else {
-                for (Message msg : messages) {
-                    JsonObject respMessage = jsonProvider.createObjectBuilder()
-                            .add("id", msg.getId())
-                            .add("username", msg.getUsername())
-                            .add("message", msg.getMessage())
-                            .build();
-                    writer.print(respMessage);
-                }
-                writer.flush();
-            }
-        }
-
-        if(type.equals("checkServer")) {
-            writer.print(true);
-        }
-
+        response.setCharacterEncoding("UTF-8");
+        final AsyncContext asyncContext = request.startAsync(request, response);
+        asyncContext.setTimeout(Integer.MAX_VALUE - 1);
+        contexts.add(asyncContext);
 
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        System.out.println("it works POST");
+        List<AsyncContext> asyncContexts = new ArrayList<>(this.contexts);
+        this.contexts.clear();
+        Message message = new Message();
+        message.setType(request.getParameter("type"));
+        if(message.getType().equals("add")) {
+            message.setUsername(request.getParameter("username"));
+            message.setMessage(request.getParameter("message"));
+            message.setId(this.id);
+            this.id++;
+            messages.add(message);
+            JsonProvider jsonProvider = JsonProvider.provider();
+            JsonObject respMessage = jsonProvider.createObjectBuilder()
+                    .add("id", message.getId())
+                    .add("username", message.getUsername())
+                    .add("message", message.getMessage())
+                    .add("type", message.getType())
+                    .build();
+            for(AsyncContext asyncContext : asyncContexts) {
+                try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
+                    writer.print(respMessage);
+                    writer.flush();
+                    asyncContext.complete();
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        if(message.getType().equals("log")) {
+            request.getSession().setAttribute("username", request.getParameter("username"));
+            for(AsyncContext asyncContext : asyncContexts) {
+                try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
+                    List<String> usernames = new ArrayList<>();
+                    for(HttpSession session : sessions) {
+                        usernames.add((String)session.getAttribute("username"));
+                    }
+                    JsonProvider jsonProvider = JsonProvider.provider();
+                    System.out.println(usernames.toString());
+                    JsonObject respMessage = jsonProvider.createObjectBuilder()
+                            .add("usernames", usernames.toString())
+                            .add("type", message.getType())
+                            .build();
+                    writer.print(respMessage);
+                    writer.flush();
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+      /*  System.out.println("it works POST");
 
         String readerTmp;
         Message message = new Message();
@@ -105,10 +117,7 @@ public class ChatServlet extends HttpServlet {
                     .add("message", message.getMessage())
                     .build();
             writer.print(respMessage);
-            //TODO: make all sessions make GET queries
-            for(HttpSession session : sessions) {
 
-            }
         }
 
         if(message.getType().equals("log")) {
@@ -116,7 +125,7 @@ public class ChatServlet extends HttpServlet {
             request.getSession().setAttribute("username", st.nextToken());
             PrintWriter writer = response.getWriter();
             writer.print(true);
-        }
+        }*/
     }
 
     @Override

@@ -1,23 +1,23 @@
 function start() {
-    var username = "test";
+    var username;
     var sendButton = document.getElementsByClassName("sendButton");
-    $.ajax({
-        url: "http://localhost:8080/ChatServlet",
-        method: 'GET',
-        data: {
-            type: "connect"
-        }
-    })
-        .done(function(resp) {
-            var tmp = resp.split("}");
+    /* $.ajax({
+     url: "http://localhost:8080/ChatServlet",
+     method: 'GET',
+     data: {
+     type: "connect"
+     }
+     })
+     .done(function(resp) {
+     var tmp = resp.split("}");
 
 
-            for(var i = 0; i < tmp.length; i++) {
-                console.log(JSON.parse(tmp[i]));
-                addMessage(JSON.stringify(JSON.parse(tmp[i])));
-            }
-        });
-    $(function() {
+     for(var i = 0; i < tmp.length; i++) {
+     console.log(JSON.parse(tmp[i]));
+     addMessage(JSON.stringify(JSON.parse(tmp[i])));
+     }
+     });*/
+    $(function () {
         $('#chat').perfectScrollbar();
         Ps.initialize(document.getElementById('chat'));
     });
@@ -27,31 +27,38 @@ function start() {
         Text = decodeURIComponent(Text);
         uname = decodeURIComponent(uname);
         newDiv.innerHTML = "<span class = 'nickname'>" + uname + ": " + "</span>"
-        + "<img src='resources/remove.png' class='delete'>" + "<img src='resources/edit.png' class='edit'>"
+        + "<img src='/resources/remove.png' class='delete'>" + "<img src='/resources/edit.png' class='edit'>"
         + "<p class='text'>" + Text + "</p>";
         return newDiv;
     }
 
     //TODO
     sendButton[0].addEventListener("click", function () {
-        var message = document.getElementsByClassName("message")[0].value;
-        $.ajax({
-            url: "http://localhost:8080/ChatServlet",
-            method: 'POST',
-            data: {
-                type: "add",
-                message: message,
-                username: username
-            }
-        })
-            .done(function (msg) {
-                addMessage(msg);
+        if(username !== undefined) {
+            var message = document.getElementsByClassName("message")[0].value;
+            $.ajax({
+                url: "http://localhost:8080/ChatServlet",
+                method: 'POST',
+                data: {
+                    type: "add",
+                    message: message,
+                    username: username
+                }
             });
-        //addDevice(name, message);
+            /*.done(function (msg) {
+             console.log(msg);
+             addMessage(msg);
+             });*/
+            //addDevice(name, message);
+        }
+        else{
+            alert("login pls");
+        }
+
     });
     function addMessage(resp) {
         if (username != undefined) {
-            var tmp = JSON.parse(resp);
+            var tmp = $.parseJSON(resp);
             var mainWindow = document.getElementsByClassName("mainWindow")[0];
             var msg = tmp.message;
             /*document.getElementsByClassName("message")[0].value;*/
@@ -87,52 +94,60 @@ function start() {
         }
     }
 
-    function addUserDiv() {
+    function addUserDiv(user) {
         var newDiv = document.createElement('div');
         newDiv.className = 'onlineUser';
-        newDiv.innerHTML = "<p class='text'>" + username + "</p>";
+        newDiv.innerHTML = "<p class='text'>" + user + "</p>";
         return newDiv;
     }
 
     var setNameButton = document.getElementsByClassName("confirmNameButton")[0];
     setNameButton.addEventListener("click", function () {
         username = document.getElementsByClassName("username")[0].value;
-        $.ajax({
+        /*$.ajax({
             url: "http://localhost:8080/ChatServlet",
             method: 'POST',
             data: {
                 type: "log",
                 username: username
             }
+        });*/
+        /* .done(function (resp) {
+         console.log(resp);
+         log(resp);
+         })*/
+    });
+    //TODO fix dat shit
+    function log(resp) {
+
+        var user = document.getElementsByClassName("usersOnline")[0];
+
+        var users = JSON.parse(resp).usernames.split(",");
+        for(var i = 0; i < users.length; i++) {
+            var usr = users[i].replace('[','').replace(']','').replace(' ','');
+            if(usr !== "null") {
+                var userDiv = addUserDiv(usr);
+                user.appendChild(userDiv);
+            }
+        }
+        $(user).hide().fadeIn(150);
+
+    }
+
+    (function poll() {
+        $.ajax({
+            url: "http://localhost:8080/ChatServlet",
+            method: 'GET'
+
         })
             .done(function (resp) {
                 console.log(resp);
-                log(resp);
-            })
-    });
-    //TODO: change for server variant
-    function log(resp) {
-        if (JSON.parse(resp) == true) {
-            var user = document.getElementsByClassName("usersOnline")[0];
-            var foreveralone = document.getElementsByClassName("onlineUser")[0];
-            if (foreveralone != undefined) {
-                user.removeChild(document.getElementsByClassName("onlineUser")[0]);
-            }
-            var userDiv = addUserDiv();
-            user.appendChild(userDiv);
-            $(userDiv).hide().fadeIn(150);
-        }
-    }
-
-    (function checkServ() {
-        $.ajax({
-            url: "http://localhost:8080/ChatServlet",
-            method: 'GET',
-            data: {
-                type: "checkServer"
-            }
-        })
-            .done(function () {
+                if (JSON.parse(resp).type === 'add') {
+                    addMessage(resp);
+                }
+               /* if (JSON.parse(resp).type === 'log') {
+                    log(resp);
+                }*/
                 var status = document.getElementsByClassName("rightText")[0];
                 status.innerHTML = "Server: OK";
             })
@@ -140,8 +155,9 @@ function start() {
                 var status = document.getElementsByClassName("rightText")[0];
                 status.innerHTML = "Server: Unavailable";
             })
-            .complete(function() {
-                setTimeout(checkServ, 5000);
+            .complete(function () {
+                poll();
             })
     })();
+
 }
