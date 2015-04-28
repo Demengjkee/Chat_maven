@@ -1,7 +1,7 @@
 # Chat_maven
 
-Frontend TODO : autoscroll, smiles
+Frontend TODO : autoscroll, smiles, fix useronline list
 
-Backend TODO : (SSE || longpolling), doDelete, duPut, normal doGet doPost
+Backend TODO :  doDelete, duPut
 
-Trying to avoid cycled GET for acquireing messages
+server is usung longpolling
