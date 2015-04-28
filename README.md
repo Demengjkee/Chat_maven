@@ -1,7 +1,8 @@
 # Chat_maven
 
-Frontend TODO : autoscroll, smiles, fix useronline list
+Frontend TODO : autoscroll, smiles
 
-Backend TODO :  doDelete, duPut
+Backend TODO :  doDelete, doPut, history
 
-server is using longpolling
+
+Server is using longpolling
