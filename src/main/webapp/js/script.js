@@ -18,7 +18,6 @@ function start() {
 
     addEventListener("keypress", function(e) {
        if(e.keyCode == 13 && $('.message').is(':focus')) {
-           console.log("123");
            send();
        }
     });

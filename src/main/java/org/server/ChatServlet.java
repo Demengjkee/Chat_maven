@@ -24,6 +24,9 @@ public class ChatServlet extends HttpServlet {
     private List<AsyncContext> contexts = new LinkedList<>();
     private final List<HttpSession> sessions = new ArrayList<>();
 
+    public void init() throws ServletException{
+        super.init();
+    }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -101,6 +104,16 @@ public class ChatServlet extends HttpServlet {
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+    }
+
+    @Override
+    public void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+    }
+    //TODO: history goes here =)
+    public void destroy() {
 
     }
 }
