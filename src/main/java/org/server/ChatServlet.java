@@ -1,5 +1,6 @@
 package org.server;
 
+import com.mysql.jdbc.Connection;
 import org.message.Message;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,10 +28,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-
 @WebServlet(urlPatterns = {"/ChatServlet"}, asyncSupported = true)
 public class ChatServlet extends HttpServlet {
-    //TODO: syncronizedList
+
     private Integer id = 0;
     private final List<Message> messages = Collections.synchronizedList(new ArrayList<Message>());
     private List<AsyncContext> contexts = new LinkedList<>();
@@ -53,6 +53,7 @@ public class ChatServlet extends HttpServlet {
         if(!sessions.contains(request.getSession())) {
             sessions.add(request.getSession());
         }
+
 
         response.setCharacterEncoding("UTF-8");
         final AsyncContext asyncContext = request.startAsync(request, response);
@@ -125,6 +126,24 @@ public class ChatServlet extends HttpServlet {
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        List<AsyncContext> asyncContexts = new ArrayList<>(this.contexts);
+        this.contexts.clear();
+        System.out.println(123);
+        System.out.println(request.getParameter("id"));
+        for(AsyncContext asyncContext : asyncContexts) {
+            try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
+                writer.print(1);
+                writer.flush();
+                asyncContext.complete();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+       /* int delID = Integer.parseInt(request.getParameter("id"));
+        System.out.println(delID);
+        response.getWriter().print(delID);*/
 
     }
 

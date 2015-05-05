@@ -69,12 +69,22 @@ function start() {
                     $(todel).fadeOut(150, function () {
                         todel.parentNode.removeChild(todel);
                     });
+                    console.log(todel.id);
+                    $.ajax({
+                        url: "http://localhost:8080/ChatServlet",
+                        method: 'DELETE',
+                        data: {
+                            id: todel.id
+                        }
+                    });
+
                 });
                 messageDiv.childNodes[2].addEventListener("click", function () {
                     var oldmsg = this.parentNode.childNodes[3];
                     oldmsg = oldmsg.innerHTML;
                     this.parentNode.childNodes[3].innerHTML = prompt("EditMessage", oldmsg);
                     $(this.parentNode.childNodes[3]).hide().fadeIn(300);
+
                 });
             }
             document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
@@ -93,7 +103,8 @@ function start() {
     }
 
     var setNameButton = document.getElementsByClassName("confirmNameButton")[0];
-    setNameButton.addEventListener("click", function () {
+    setNameButton.addEventListener("click", log_request);
+    function log_request() {
         username = document.getElementsByClassName("username")[0].value;
         $.ajax({
             url: "http://localhost:8080/ChatServlet",
@@ -102,8 +113,11 @@ function start() {
                 type: "log",
                 username: username
             }
-        });
-    });
+        })
+            .done(function(resp) {
+                console.log(resp);
+            });
+    }
 
     function log(resp) {
         var user = document.getElementsByClassName("usersOnline")[0];
