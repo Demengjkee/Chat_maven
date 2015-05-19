@@ -11,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -34,6 +35,8 @@ public class ChatServlet extends HttpServlet {
     private ResultSet rs = null;
 
     public void init() throws ServletException {
+
+        super.init();
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/CHAT_DB", "root", "root");
@@ -54,7 +57,7 @@ public class ChatServlet extends HttpServlet {
         }
 
 
-        super.init();
+
     }
 
     @Override
@@ -155,8 +158,16 @@ public class ChatServlet extends HttpServlet {
         response.addHeader("Access-Control-Allow_Methods", "*");
         List<AsyncContext> asyncContexts = new ArrayList<>(this.contexts);
         this.contexts.clear();
-        System.out.println(123);
-        System.out.println(request.getParameter("id"));
+        BufferedReader reader = request.getReader();
+        String str = reader.readLine();
+        str = str.substring(3);
+        try {
+            pst = con.prepareStatement("DELETE FROM messages where id=" + str + ";");
+            pst.executeUpdate();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
         for(AsyncContext asyncContext : asyncContexts) {
             try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
                 writer.print(1);
