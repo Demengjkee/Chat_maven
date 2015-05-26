@@ -1,13 +1,12 @@
 package org.server;
 
 
-
-
 import org.message.Message;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +17,6 @@ import java.util.*;
 import java.util.Date;
 import javax.json.*;
 import javax.json.spi.*;
-import javax.servlet.http.HttpSession;
 import java.sql.*;
 
 
@@ -26,7 +24,6 @@ import java.sql.*;
 public class ChatServlet extends HttpServlet {
 
     private Integer id = 0;
-    private final List<Message> messages = Collections.synchronizedList(new ArrayList<Message>());
     private List<AsyncContext> contexts = new LinkedList<>();
     private final List<HttpSession> sessions = Collections.synchronizedList(new ArrayList<HttpSession>());
     private Connection con = null;
@@ -55,21 +52,17 @@ public class ChatServlet extends HttpServlet {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-
-
-
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-
         response.addHeader("Access-Control-Allow_Methods", "*");
+
         if(!sessions.contains(request.getSession())) {
             sessions.add(request.getSession());
         }
-
 
         response.setCharacterEncoding("UTF-8");
         final AsyncContext asyncContext = request.startAsync(request, response);
@@ -79,7 +72,7 @@ public class ChatServlet extends HttpServlet {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.addHeader("Access-Control-Allow_Methods", "*");
@@ -104,7 +97,6 @@ public class ChatServlet extends HttpServlet {
                 ex.printStackTrace();
             }
 
-            messages.add(message);
             JsonProvider jsonProvider = JsonProvider.provider();
             JsonObject respMessage = jsonProvider.createObjectBuilder()
                     .add("id", message.getId())
@@ -152,7 +144,7 @@ public class ChatServlet extends HttpServlet {
     }
 
     @Override
-    public void doDelete(HttpServletRequest request, HttpServletResponse response)
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.addHeader("Access-Control-Allow_Methods", "*");
@@ -168,9 +160,14 @@ public class ChatServlet extends HttpServlet {
         catch (Exception ex) {
             ex.printStackTrace();
         }
+        JsonProvider jsonProvider = JsonProvider.provider();
+        JsonObject respMessage = jsonProvider.createObjectBuilder()
+                .add("type", "delete")
+                .add("id", str)
+                .build();
         for(AsyncContext asyncContext : asyncContexts) {
             try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
-                writer.print(1);
+                writer.print(respMessage);
                 writer.flush();
                 asyncContext.complete();
             }
@@ -178,20 +175,53 @@ public class ChatServlet extends HttpServlet {
                 ex.printStackTrace();
             }
         }
-       /* int delID = Integer.parseInt(request.getParameter("id"));
-        System.out.println(delID);
-        response.getWriter().print(delID);*/
-
     }
 
     @Override
-    public void doPut(HttpServletRequest request, HttpServletResponse response)
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        response.addHeader("Access-Control-Allow_Methods", "*");
+
+        List<AsyncContext> asyncContexts = new ArrayList<>(this.contexts);
+        this.contexts.clear();
+        BufferedReader reader = request.getReader();
+        String str = reader.readLine();
+        System.out.println(str);
+        String[] reqParams = str.split("&");
+        reqParams[0] = reqParams[0].substring(3);
+        reqParams[1] = reqParams[1].substring(7);
+        try {
+            pst = con.prepareStatement("UPDATE messages SET message=(?) WHERE id=(?)");
+            pst.setString(1, reqParams[1]);
+            pst.setString(2, reqParams[0]);
+            pst.executeUpdate();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        JsonProvider jsonProvider = JsonProvider.provider();
+        JsonObject respMessage = jsonProvider.createObjectBuilder()
+                .add("type", "edit")
+                .add("id", reqParams[0])
+                .add("newmsg", reqParams[1])
+                .build();
+        for(AsyncContext asyncContext : asyncContexts) {
+            try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
+                writer.print(respMessage);
+                writer.flush();
+                asyncContext.complete();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         resp.addHeader("Access-Control-Allow_Methods", "PUT, DELETE, POST, GET, OPTIONS");
     }
 

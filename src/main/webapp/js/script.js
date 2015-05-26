@@ -64,28 +64,9 @@ function start() {
                     this.childNodes[1].style.visibility = "hidden";
                     this.childNodes[2].style.visibility = "hidden";
                 });
-                messageDiv.childNodes[1].addEventListener("click", function () {
-                    var todel = this.parentNode;
-                    $(todel).fadeOut(150, function () {
-                        todel.parentNode.removeChild(todel);
-                    });
-                    console.log(todel.id);
-                    $.ajax({
-                        url: "http://localhost:8080/ChatServlet",
-                        method: 'DELETE',
-                        data: {
-                            id: todel.id
-                        }
-                    });
+                messageDiv.childNodes[1].addEventListener("click", delReq);
+                messageDiv.childNodes[2].addEventListener("click", putReq);
 
-                });
-                messageDiv.childNodes[2].addEventListener("click", function () {
-                    var oldmsg = this.parentNode.childNodes[3];
-                    oldmsg = oldmsg.innerHTML;
-                    this.parentNode.childNodes[3].innerHTML = prompt("EditMessage", oldmsg);
-                    $(this.parentNode.childNodes[3]).hide().fadeIn(300);
-
-                });
             }
             document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
             Ps.update(document.getElementById('chat'));
@@ -93,6 +74,34 @@ function start() {
         else {
             alert("please, enter your nickname");
         }
+    }
+
+    function putReq() {
+        var oldmsg = this.parentNode.childNodes[3];
+        oldmsg = oldmsg.innerHTML;
+
+        var req = prompt("EditMessage", oldmsg);
+        $.ajax({
+            url: "http://localhost:8080/ChatServlet",
+            method: 'PUT',
+            data: {
+                id: this.parentNode.id,
+                newmsg: req
+            }
+        });
+
+    }
+
+    function delReq() {
+        var todel = this.parentNode;
+        console.log("delete msg id " + todel.id);
+        $.ajax({
+            url: "http://localhost:8080/ChatServlet",
+            method: 'DELETE',
+            data: {
+                id: todel.id
+            }
+        });
     }
 
     function addUserDiv(user) {
@@ -114,9 +123,7 @@ function start() {
                 username: username
             }
         })
-            .done(function(resp) {
-                console.log(resp);
-            });
+
     }
 
     function log(resp) {
@@ -138,6 +145,20 @@ function start() {
         $(user).hide().fadeIn(150);
     }
 
+    function del(resp) {
+        var delDiv = document.getElementById(JSON.parse(resp).id);
+        $(delDiv).fadeOut(200, function () {
+            delDiv.remove();
+        });
+
+    }
+
+    function edit(resp) {
+        var editDiv = document.getElementById(JSON.parse(resp).id);
+        editDiv.childNodes[3].innerHTML = JSON.parse(resp).newmsg;
+        $(editDiv).hide().fadeIn(300);
+    }
+
     (function poll() {
         $.ajax({
             url: "http://localhost:8080/ChatServlet",
@@ -152,15 +173,21 @@ function start() {
                 if (JSON.parse(resp).type === 'log') {
                     log(resp);
                 }
+                if (JSON.parse(resp).type === 'delete') {
+                    del(resp);
+                }
+                if (JSON.parse(resp).type === 'edit') {
+                    edit(resp);
+                }
                 var status = document.getElementsByClassName("rightText")[0];
                 status.innerHTML = "Server: OK";
+                poll();
             })
             .fail(function () {
                 var status = document.getElementsByClassName("rightText")[0];
                 status.innerHTML = "Server: Unavailable";
+                setTimeout(poll, 5000);
             })
-            .complete(function () {
-                poll();
-            })
+
     })();
 }
