@@ -140,9 +140,9 @@ function start() {
             if(usr !== "null") {
                 var userDiv = addUserDiv(usr);
                 user.appendChild(userDiv);
+                $(userDiv).hide().fadeIn(150);
             }
         }
-        $(user).hide().fadeIn(150);
     }
 
     function del(resp) {

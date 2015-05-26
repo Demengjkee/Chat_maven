@@ -15,9 +15,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.Date;
-import javax.json.*;
-import javax.json.spi.*;
 import java.sql.*;
+import org.json.*;
 
 
 @WebServlet(urlPatterns = {"/ChatServlet"}, asyncSupported = true)
@@ -96,15 +95,12 @@ public class ChatServlet extends HttpServlet {
             catch (Exception ex) {
                 ex.printStackTrace();
             }
-
-            JsonProvider jsonProvider = JsonProvider.provider();
-            JsonObject respMessage = jsonProvider.createObjectBuilder()
-                    .add("id", message.getId())
-                    .add("username", message.getUsername())
-                    .add("message", message.getMessage())
-                    .add("type", message.getType())
-                    .add("date", message.getDate().getTime())
-                    .build();
+            JSONObject respMessage = new JSONObject();
+            respMessage.put("id", message.getId());
+            respMessage.put("username", message.getUsername());
+            respMessage.put("message", message.getMessage());
+            respMessage.put("type", message.getType());
+            respMessage.put("date", message.getDate().getTime());
             for(AsyncContext asyncContext : asyncContexts) {
                 try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
                     writer.print(respMessage);
@@ -125,11 +121,9 @@ public class ChatServlet extends HttpServlet {
                     usernames.add((String) session.getAttribute("username"));
                 }
             }
-            JsonProvider jsonProvider = JsonProvider.provider();
-            JsonObject respMessage = jsonProvider.createObjectBuilder()
-                    .add("usernames", usernames.toString())
-                    .add("type", message.getType())
-                    .build();
+            JSONObject respMessage = new JSONObject();
+            respMessage.put("usernames", usernames.toString());
+            respMessage.put("type", message.getType());
             for(AsyncContext asyncContext : asyncContexts) {
                 try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
                     writer.print(respMessage);
@@ -160,11 +154,9 @@ public class ChatServlet extends HttpServlet {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-        JsonProvider jsonProvider = JsonProvider.provider();
-        JsonObject respMessage = jsonProvider.createObjectBuilder()
-                .add("type", "delete")
-                .add("id", str)
-                .build();
+        JSONObject respMessage = new JSONObject();
+        respMessage.put("type", "delete");
+        respMessage.put("id", str);
         for(AsyncContext asyncContext : asyncContexts) {
             try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
                 writer.print(respMessage);
@@ -200,12 +192,10 @@ public class ChatServlet extends HttpServlet {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-        JsonProvider jsonProvider = JsonProvider.provider();
-        JsonObject respMessage = jsonProvider.createObjectBuilder()
-                .add("type", "edit")
-                .add("id", reqParams[0])
-                .add("newmsg", reqParams[1])
-                .build();
+        JSONObject respMessage = new JSONObject();
+        respMessage.put("type", "edit");
+        respMessage.put("id", reqParams[0]);
+        respMessage.put("newmsg", reqParams[1]);
         for(AsyncContext asyncContext : asyncContexts) {
             try(PrintWriter writer = asyncContext.getResponse().getWriter()) {
                 writer.print(respMessage);
