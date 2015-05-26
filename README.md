@@ -1,6 +1,6 @@
 # Chat_maven
 
-Frontend TODO :   smiles
+Frontend TODO :   smiles, pretty edit message window
 
 Backend TODO :  fix damn online list, fix longpolling bugs
 
