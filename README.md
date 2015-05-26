@@ -2,7 +2,7 @@
 
 Frontend TODO :   smiles
 
-Backend TODO :  doDelete(almost ready), doPut, fix damn online list
+Backend TODO :  fix damn online list, fix longpolling bugs
 
 
 Server is using longpolling
